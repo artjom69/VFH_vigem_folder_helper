@@ -14,6 +14,7 @@ Konsolenanwendung zur Sortierung von Vigem recording Daten.
 
 FolderSelect folder;
 File file;
+int one_min_countdown;
 
 void print_like_80ies(int i) {
 	if (i == 0) {
@@ -94,10 +95,32 @@ void print_like_80ies(int i) {
 		printf("   x     xxxxxx   \n");
 	}
 }
+void counter_printer() {
+	if(one_min_countdown >=55)
+		std::cout << "\n* * * * * * \n";
+	
+	if (one_min_countdown >= 45)
+		std::cout << "\n* * * * *  \n";
+	
+	if (one_min_countdown >= 35)
+		std::cout << "\n* * * *   \n";
+	
+	if (one_min_countdown >= 25)
+		std::cout << "\n* * *   \n";
+	
+	if (one_min_countdown >= 15)
+		std::cout << "\n* *  \n";
+	
+	if (one_min_countdown >= 5)
+		std::cout << "\n*   \n";
+
+	one_min_countdown -= 1;
+	
+}
 
 void screen_output() {
 	system("cls");
-	std::cout << "[UP] = new scenario, [DOWN] = save timestamp,  [RIGHT]select scenario \n";
+	std::cout << "[UP] = new scenario, [DOWN] = save timestamp,  [RIGHT] = beta select scenario \n";
 
 	std::cout << "\n******************************************************************* \n";
 
@@ -110,20 +133,22 @@ void screen_output() {
 
 	std::cout << "number  timestamps: " << file.number_timestamps_count << " \n";
 	std::cout << "last timestamp age: " << file.age_youngest_timestamp_count << " \n";
-	std::cout << "already driven: " << file.already_driven << "\n\n\n";
+	std::cout << "already driven:  \n\n\n";
 	print_like_80ies(file.already_driven);
+	std::cout << "\n 1_min countddown:\n";
 }
 
 
 //strictly procedural, program needs to do only 1 thing at the time
 int main() {
-	
+	one_min_countdown = 0;
 	file.check_if_timestamp_file_present();
 
 	while (true) {
 
 		screen_output();
-		
+		counter_printer();
+
 		if (GetAsyncKeyState(VK_UP)) {
 			std::cout << "enter new scenario name: \n";
 			string folder_name_input;
@@ -138,6 +163,7 @@ int main() {
 		if (GetAsyncKeyState(VK_DOWN)) {
 			if (file.check_if_debug_present() && file.check_if_timestamp_file_present()) {
 				file.write_timestamp_in_list();
+				one_min_countdown = 60;
 			}
 			else
 				std::cout << "Error: No VIGEM-timestamp found.\n";	
@@ -148,9 +174,14 @@ int main() {
 		if (GetAsyncKeyState(VK_RIGHT)) {
 			file.do_list_content_of_folder("./");
 			std::cout << "choose your scenario folder, [0] = cancel\n\n";
-			for (int i = 0; i < file.content_list.size(); i++)
-				std::cout << i+1 << ": " << file.content_list[i+1]<<"\n";
-			
+			try {
+				if (file.content_list.size() > 3) {
+					for (int i = 0; i < file.content_list.size(); i++)
+						std::cout << i + 1 << ": " << file.content_list[i + 1] << "\n";
+				}
+			}
+			catch(...){}
+
 			int command = 0;
 			std::cin >> command;
 			
