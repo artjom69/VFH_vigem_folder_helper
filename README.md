@@ -7,4 +7,4 @@ a copy timestamps algorithm for vigem-system recording data.
     -start the .exe file, if error message occurs, try to install the C++ runtime provided here
     -start vigem recording
     -usage of VFH is self-explanatory
-    -main goal is strictly procedural copying meachnism of timestamps into an timestamps list
+    -main goal is strictly procedural copying meachanism of timestamps into an timestamps list
