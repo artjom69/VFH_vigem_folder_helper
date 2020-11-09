@@ -96,38 +96,39 @@ void print_like_80ies(int i) {
 	}
 }
 void counter_printer() {
+	if (one_min_countdown >= 5) {
+		std::cout << "\n 1_min countddown:\n";
+		std::cout << "\n*   \n";
+	}
+
+	if (one_min_countdown >= 15)
+		std::cout << "\n* *  \n";
+
+	if (one_min_countdown >= 25)
+		std::cout << "\n* * *   \n";
+
+	if (one_min_countdown >= 35)
+		std::cout << "\n* * * *   \n";
+
+	if (one_min_countdown >= 45)
+		std::cout << "\n* * * * *  \n";
+
 	if(one_min_countdown >=55)
 		std::cout << "\n* * * * * * \n";
 	
-	if (one_min_countdown >= 45)
-		std::cout << "\n* * * * *  \n";
-	
-	if (one_min_countdown >= 35)
-		std::cout << "\n* * * *   \n";
-	
-	if (one_min_countdown >= 25)
-		std::cout << "\n* * *   \n";
-	
-	if (one_min_countdown >= 15)
-		std::cout << "\n* *  \n";
-	
-	if (one_min_countdown >= 5)
-		std::cout << "\n*   \n";
-
 	one_min_countdown -= 1;
-	
 }
 
 void screen_output() {
 	system("cls");
-	std::cout << "[UP] = new scenario, [DOWN] = save timestamp,  [RIGHT] = beta select scenario \n";
+	std::cout << "[UP] = new scenario, [DOWN] = save timestamp,  [RIGHT] = select existing scenario \n";
 
 	std::cout << "\n******************************************************************* \n";
 
-	std::cout << "actual   scenario: " << folder.folder_name << " \n";
-	std::cout << "debug folder name: " << file.debug_folder_name << " \n";
-	std::cout << "timestamp file name: " << file.timestamp_file_name << " \n";
-	std::cout << "youngest timestamp name: " << file.youngest_timestamp << " \n";
+	std::cout << "actual   scenario:     " << folder.folder_name << " \n";
+	std::cout << "debug folder name:     " << file.debug_folder_name << " \n";
+	std::cout << "timestamp output list: " << file.timestamp_file_name << " \n";
+	std::cout << "last timestamp name:   " << file.youngest_timestamp << " \n";
 	std::cout << "\n******************************************************************* \n";
 
 
@@ -135,7 +136,6 @@ void screen_output() {
 	std::cout << "last timestamp age: " << file.age_youngest_timestamp_count << " \n";
 	std::cout << "already driven:  \n\n\n";
 	print_like_80ies(file.already_driven);
-	std::cout << "\n 1_min countddown:\n";
 }
 
 
@@ -143,6 +143,7 @@ void screen_output() {
 int main() {
 	one_min_countdown = 0;
 	file.check_if_timestamp_file_present();
+	
 
 	while (true) {
 
@@ -172,24 +173,24 @@ int main() {
 
 		
 		if (GetAsyncKeyState(VK_RIGHT)) {
-			file.do_list_content_of_folder("./");
-			std::cout << "choose your scenario folder, [0] = cancel\n\n";
 			try {
-				if (file.content_list.size() > 3) {
-					for (int i = 0; i < file.content_list.size(); i++)
-						std::cout << i + 1 << ": " << file.content_list[i + 1] << "\n";
+				file.do_list_content_of_folder("./");
+				std::cout << "\nchoose your scenario folder, [42] = cancel\n\n";
+				
+				for (int i = 0; i < file.content_list.size(); i++)
+					std::cout << i  << ": " << file.content_list[i] << "\n";
+				
+				std::cout <<  "\n";
+				int command = 0;
+				std::cin >> command;
+
+				if (command != 42 ) {
+					folder.folder_name = file.content_list[command].substr(2);
+					std::cout << "folder name: " << folder.folder_name << "\n";
+					file.write_scenario_in_list(folder.folder_name);
 				}
 			}
-			catch(...){}
-
-			int command = 0;
-			std::cin >> command;
-			
-			if (command != 0) {
-				folder.folder_name = file.content_list[command].substr(2)  ;
-				std::cout << "folder name: " << folder.folder_name << "\n";
-				file.write_scenario_in_list(folder.folder_name);
-			}
+			catch(...){}	
 		}
 
 

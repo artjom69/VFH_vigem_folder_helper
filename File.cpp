@@ -9,6 +9,7 @@ File::File(){
 	this->youngest_timestamp = "";
 	this->timestamp_file_name = "--";
 	this->already_driven = 0;
+	this->content_list.push_back(" ");
 }
 
 
@@ -21,8 +22,7 @@ void File::write_timestamp_in_list() {
 	std::ofstream ofile(this->timestamp_file_name, std::ios::out | std::ios::app);
 
 	if (ofile.is_open()){
-		ofile << this->youngest_timestamp << std::endl; // this->trim_string(this->youngest_timestamp, "\"");
-		//ofile << this->youngest_timestamp << std::endl;
+		ofile << this->youngest_timestamp << std::endl; 
 		std::cout << "operation successfully performed\n";
 		ofile.close();
 		this->already_driven += 1;
@@ -70,7 +70,7 @@ void File::count_timestamps_in_debug_folder() {
 					this->number_timestamps_count += 1;
 				}
 			}
-			if (!is_included) {
+			if (!is_included && this->debug_folder_name.size() > 1) {
 				this->debug_content_list.push_back(this->content_list[i]);
 				this->number_timestamps_count = 0;
 				this->youngest_timestamp.clear();
@@ -115,12 +115,14 @@ bool File::has_digit(const std::string & s) {
 }
 
 void File::do_list_content_of_folder(std::string folder_name) {
-	while(this->content_list.size()>0)
-		this->content_list.clear();
-	
-	for (const auto & entry : std::experimental::filesystem::directory_iterator(folder_name)) 
-		this->content_list.push_back(entry.path().string());
-	
+	try {
+		if (this->content_list.size() > 0)
+			this->content_list.clear();
+
+		for (const auto & entry : std::experimental::filesystem::directory_iterator(folder_name))
+			this->content_list.push_back(entry.path().string());
+	}
+	catch(...){}
 }
 
 bool File::check_if_debug_present(){
@@ -136,8 +138,11 @@ bool File::check_if_debug_present(){
 		return true;
 	}
 	
-	else
+	else {
+		this->debug_folder_name = " ";
 		return false;
+	}
+		
 }
 
 std::string File::select_folder(){
